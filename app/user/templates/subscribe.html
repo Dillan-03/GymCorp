@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid p-5">
+	<div class="container-fluid row justify-content-center align-items-center">
+		{% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+		<ul class="col-12 col-lg-9 col-xl-7 alert alert-success mt-4 p-4">
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+		<ul class="col-12 col-lg-9 col-xl-7 alert alert-info mt-4 p-4">
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %} {% endwith %}
+	</div>
+
+	<div class="row my-5 align-items-center justify-content-center">
+		<div class="col-12 col-md-5 col-xxl-3 mb-5">
+			<div class="card border border-warning" style="background-color: #000000">
+				<div class="card-header border border-warning text-center text-warning">Good Value!</div>
+				<div class="class-body py-4 text-warning">
+					<h3 class="card-title text-center">Monthly Subscription!</h3>
+					<form method="POST" action="{{ url_for('customer_bp.subscribe') }}">
+						{{ form.csrf_token }}
+						<hr />
+						<div class="form-group mx-2 text-center">
+							<input type="hidden" name="plan" value="monthly" />
+							<label class="fs-1 fw-bold" for="plan">{{form.plan_text['monthly']}}</label>
+						</div>
+						<hr />
+						<div>
+							<p class="card-text mx-2 text-light d-none d-lg-block text-center">
+								Become a member of our establishment and get {{discount_percentage}}% off of all bookings!
+							</p>
+						</div>
+						<div class="text-center" style="margin-top: 20px">
+							<button type="submit" class="btn btn-outline-primary-btn-lg mt-3 border border-dark text-warning">Buy Membership</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-12 col-md-5 col-xxl-3 mb-5">
+			<div class="card border border-warning" style="background-color: #000000">
+				<div class="card-header border border-warning text-center text-warning">Best Value!</div>
+				<div class="class-body py-4 text-warning">
+					<h3 class="card-title text-center">Yearly Subscription!</h3>
+					<form method="POST" action="{{ url_for('customer_bp.subscribe') }}">
+						{{ form.csrf_token }}
+						<hr />
+						<div class="form-group mx-2 text-center">
+							<input type="hidden" name="plan" value="annual" />
+							<label class="fs-1 fw-bold" for="plan">{{form.plan_text['annual']}}</label>
+						</div>
+						<hr />
+						<div>
+							<p class="card-text mx-2 text-light d-none d-lg-block text-center">
+								Become a member of our establishment and get {{discount_percentage}}% off of all bookings!
+							</p>
+						</div>
+						<div class="text-center" style="margin-top: 20px">
+							<button type="submit" class="btn btn-outline-primary-btn-lg mt-3 border border-dark text-warning">Buy Membership</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

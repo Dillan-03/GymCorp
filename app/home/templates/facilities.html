@@ -1,0 +1,115 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid p-5 bg-dark">
+	<!-- Tables for prices of all facilities -->
+	<div class="container-fluid pb-5">
+		{% for facility in data %}
+		<p class="fs-3 text-white fw-normal">{{facility.name}}</p>
+		<div class="table-responsive">
+			<table class="table table-dark fw-light border border-light border-3">
+				<thead>
+					<tr>
+						<th scope="col">Session</th>
+						<th scope="col">Availability</th>
+						<th scope="col">Start times</th>
+						<th scope="col">Length (Mins)</th>
+						<th scope="col">Price per person</th>
+					</tr>
+				</thead>
+				<tbody id="body">
+					{% for row in facility.activities %}
+					<tr class="fac">
+						<th scope="row" class="name">{{ row.name }}</th>
+						<td scope="row" class="days"></td>
+						<td scope="row" class="time">{{row.times}}</td>
+						<td scope="row" class="length">{{ row.duration }}</td>
+						<td scope="row" class="price">£{{ row.price }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		{% endfor %}
+	</div>
+</div>
+
+<script>
+	const rows = document.querySelectorAll(".fac");
+	rows.forEach((row) => {
+		const nameElement = row.querySelector(".name");
+		const days = row.querySelector(".days");
+		const times = row.querySelector(".time");
+		const length = row.querySelector(".length").textContent;
+		const price = row.querySelector(".price").textContent;
+
+		//Convert the string times to a 2d array
+		const temp_times = JSON.parse(times.textContent).map((innerArr) => innerArr.map(Number));
+
+		//Array to hold the days
+		const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+		//String to hold the times
+		let time_ = "";
+
+		//String to hold the days
+		let days_ = "";
+
+		//Manipulating the 2D array to show the corresponding times and days
+		for (var i = 0; i < temp_times.length; i++) {
+			if (temp_times[i].length != 0) {
+				var sub_array = temp_times[i];
+
+				//Add to corresponding days_ string
+				var day = daysOfWeek[i];
+				//console.log(day);
+				days_ += day;
+				days_ += "<br>";
+
+				//Add to corresponding time_ string
+				var start_time = sub_array[0];
+				var end_time = sub_array[sub_array.length - 1];
+
+				if (start_time == end_time) {
+					if (start_time < 11) {
+						time_ += start_time + "am";
+					} else {
+						if (start_time != 12) {
+							start_time -= 12;
+						}
+						time_ += start_time + "pm";
+					}
+					time_ += "<br>";
+					continue;
+				}
+
+				//Whether to show AM or PM
+				if (start_time < 11) {
+					time_ += start_time + "am";
+				} else {
+					if (start_time != 12) {
+						start_time -= 12;
+					}
+					time_ += start_time + "pm";
+				}
+				time_ += " - ";
+
+				if (end_time < 11) {
+					time_ += end_time + "am";
+				} else {
+					if (end_time != 12) {
+						end_time -= 12;
+					}
+					time_ += end_time + "pm";
+				}
+				time_ += "<br>";
+			} else {
+				console.log("Array is empty");
+			}
+		}
+		days.innerHTML = days_;
+		times.innerHTML = time_;
+		console.log(days_);
+	});
+</script>
+
+{% endblock %}

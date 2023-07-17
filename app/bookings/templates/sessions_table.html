@@ -1,0 +1,93 @@
+<table class="table table-sm">
+	<!-- Sessions table heading to show dates-->
+	<thead>
+		<tr>
+			<th scope="col" style="font-size: 0.85rem">Time</th>
+			<!-- Get the current day of the week -->
+			{% set weekday = datetime.datetime.today().weekday() %}
+			<!-- Get current time -->
+			{% set time = datetime.datetime.now().today() %}
+			<!-- Loop through x amount of days from now and present on table -->
+			{% for i in range(weekday, days_advance+weekday) %}
+			<th scope="col" style="font-size: 0.85rem">{{(time + datetime.timedelta(days=i-weekday)).date()}}</th>
+			{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+		<!-- Loop through list of times and create appropriate times-->
+		{% for i in range(opening_time, closing_time) %}
+		<tr>
+			<th scope="row" style="font-size: 0.85rem">{{ datetime.time(hour=i).strftime("%H:%M") }}</th>
+			<!-- Loop through the days of the week starting at curent weekday -->
+			{% for j in range(weekday, days_advance+weekday) %}
+			<!-- Set outer loop index -->
+			{% set outer_loop = loop %}
+			<!-- Set current date -->
+			{% set date = ((time + datetime.timedelta(days=j-weekday)).date() | trim) %}
+			<!-- Track if variable is unavailable or not-->
+			{% set unavailable = {"outside_times": True, "full_session": False, "team_event": False, "started": False} %}
+			<!-- Initialize the open spots left to size of the capacity -->
+			{% set open_spots = {"count": (facility.capacity | int)}%}
+			<!-- Loop through times array-->
+			{% for start_time in activity.times[j % 7] %}
+			<!-- Check if start time matches the time row -->
+			{% if start_time == i %}
+			<!-- If we are on the first day and the start time has already went past, then make unavailable -->
+			{% if outer_loop.first and i <= time.hour %} {% if unavailable.update({"started": True}) %} {% endif %} {% endif %}
+			<!-- Check if session is at the same time as a team event -->
+			{% for day_times in team_event_times[j % 7] %}
+			<!-- If time is the same time as start time then the event is unavailable, unless it is the team event -->
+			{% if (day_times | int) == start_time and activity.booking_type != "BookingTypes.TEAMEVENT" %}
+			<!-- Update to make event unavailable -->
+			{% if unavailable.update({"team_event": True}) %} {% endif %} {% endif %} {% endfor %}
+			<!-- Check if session is booked out -->
+			{% for session in sessions %}
+			<!-- Check if session date and time match up-->
+			{% if session.date == date and session.start_time == start_time %}
+			<!-- Set the open spots left -->
+			{% if open_spots.update({"count": open_spots.count - session.number_of_people}) %} {% endif %}
+			<!-- Check if capacity meets the number of people, plus an optional number of people sent from render -->
+			{% if (facility.capacity | int) < session.number_of_people + (number_of_people) %}
+			<!-- Update to make button unavailable -->
+			{% if unavailable.update({"full_session": True}) %} {% endif %} {% endif %} {% endif %} {% endfor %} {% if
+			unavailable.update({"outside_times": False}) %} {% endif %} {% endif %} {% endfor %}
+			<!-- If either of the keys are unavailable then we have a disabled button -->
+			{% if unavailable.outside_times or unavailable.full_session or unavailable.team_event or unavailable.started %}
+			<td>
+				<button type="button" class="container-fluid btn btn-secondary btn-lg fst-italic" style="font-size: 0.6rem" disabled>Unavailable</button>
+			</td>
+			<!-- Else we have a working button that can be booked from -->
+			{% else %}
+			<!-- If it is a booking type, we do not care about spots remaining -->
+			{% if activity.booking_type == "BookingTypes.BOOKING" %}
+			<td>
+				<!-- Add an id that refers to the date and time of the session -->
+				<button
+					type="button"
+					class="container-fluid btn btn-primary btn-lg session-button fw-semibold"
+					style="font-size: 0.6rem"
+					data-time="{{datetime.time(hour=i).strftime('%H:%M')}}"
+					data-date="{{ date }}"
+				>
+					Book now
+				</button>
+			</td>
+			<!-- Else show spots left -->
+			{% else %}
+			<td>
+				<!-- Add an id that refers to the date and time of the session -->
+				<button
+					type="button"
+					class="container-fluid btn btn-primary btn-lg session-button fw-semibold"
+					style="font-size: 0.6rem"
+					data-time="{{datetime.time(hour=i).strftime('%H:%M')}}"
+					data-date="{{ date }}"
+				>
+					{{ open_spots.count }} spots left
+				</button>
+			</td>
+			{% endif %} {% endif %} {% endfor %}
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

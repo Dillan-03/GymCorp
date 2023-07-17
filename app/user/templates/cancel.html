@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid">
+	<div class="text-center">
+		<div class="container-fluid row justify-content-center align-items-center">
+			{% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+			<ul class="col-12 col-lg-9 col-xl-7 alert alert-success mt-4 p-4">
+				{% for message in messages %}
+				<li>{{ message }}</li>
+				{% endfor %}
+			</ul>
+			{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+			<ul class="col-12 col-lg-9 col-xl-7 alert alert-info mt-4 p-4">
+				{% for message in messages %}
+				<li>{{ message }}</li>
+				{% endfor %}
+			</ul>
+			{% endif %} {% endwith %}
+		</div>
+
+		<h2 class="text-white mt-5">Cancel Your Membership</h2>
+		<p class="lead text-white">
+			We are sorry to see you go! Your automatic renewal will be cancelled and your memebership will last till the end of it's duration. Hopefully
+			we will see you again!
+		</p>
+	</div>
+	<div class="text-center">
+		<a
+			class="btn btn-lg btn-danger btn-outline-primary-btn-lg cancel-membership-button requires-confirm"
+			data-action="cancelMembership"
+			data-bs-toggle="modal"
+			data-bs-target="#confirm-modal"
+		>
+			Cancel Membership
+		</a>
+	</div>
+</div>
+
+<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header"><h5 class="modal-title" id="confirm-modal-label">Confirmation</h5></div>
+			<div class="modal-body">Are you sure you want to proceed?</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nevermind</button>
+				<a class="btn btn-danger btn-ok">Confirm</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('customer_bp.static', filename='js/cancel_membership.js') }}"></script>
+
+{% endblock %}

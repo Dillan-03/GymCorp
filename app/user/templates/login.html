@@ -1,0 +1,147 @@
+{% extends "base.html" %} {% block content %}
+<div>
+<div class="container-fluid p-5">
+	<div class="container h-100">
+		<div class="row justify-content-center align-items-center h-100">
+			<div class="col-12 col-lg-9 col-xl-7">
+				<div class="card bg-light-subtle shadow-2-strong card-registration" style="border-radius: 15px">
+					<div class="card-body p-4 p-md-5">
+						{% if login_type == 'customer' %}
+						<div class = "text-center">
+							<a><img class = "logo" style = "width: 75px;" src="{{ url_for('home_bp.static', filename='GBlack.png') }}" alt="GymCorp" /></a>
+						</div>
+						
+							<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Login</h3>
+							
+							<form action="{{ url_for('customer_bp.login', login_type='customer') }}" method="post" name="login" id="login_form">
+						{% else %}
+							<div class = "text-center">
+								<a><img class = "logo" style = "width: 75px;" src="{{ url_for('home_bp.static', filename='GBlack.png') }}" alt="GymCorp" /></a>
+							</div>
+							<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Employee Login</h3>
+							<form action="{{ url_for('customer_bp.login', login_type='employee') }}" method="post" name="login" id="login_form">
+						{% endif %}
+						<hr>
+							{{ form.csrf_token }}
+							<div class="row justify-content-center">
+								<div class="col-md-10 mb-4 pb-2 ">
+									<div class="form-outline ">
+										<label class="form-label" for="email">Email</label>
+										{{form.email(class="form-control form-control-lg", id="login_email")}}
+									</div>
+								</div>
+							</div>
+						
+							<div class="row justify-content-center">
+								<div class="col-md-10 mb-2">
+									<div class="form-outline">
+										<label class="form-label" for="password">Password</label>
+										{{form.password(class="form-control form-control-lg")}}
+									</div>
+								</div>
+							</div>
+
+							{% if login_type == 'customer' %}
+							<div class="row justify-content-center">
+								<div class="col-md-10 mb-2">
+									<a
+									class="btn btn-secondary btn-sm"
+									data-bs-toggle="modal"
+									data-bs-target="#reset-modal"
+									>Forgot Password</a>
+								</div>
+							</div>
+							{% endif %}
+
+							<div class="row justify-content-center">
+								<div class="col-md-10 mb-2">
+									<div class="form-outline">
+										<label class="form-check-label" for="remember_me">Remember me? </label>
+										{{form.remember_me(class="form-check-input")}}
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-4 text-center">{{form.submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle",value="Login")}}</div>
+							{% if form.password.errors %}
+							<ul class="alert alert-warning mt-4 p-4">
+								{% for error in form.password.errors %}
+								<li>{{ error }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+							<ul class="alert alert-success mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+							<ul class="alert alert-info mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %}
+
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% if login_type == 'customer' %}
+<div class="modal fade" id="reset-modal" tabindex="-1" role="dialog" aria-labelledby="reset-modal-label" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<form action="{{ url_for('customer_bp.reset_password') }}" method="POST" id="reset_form">
+				{{ reset_form.csrf_token }}
+				<div class="modal-header"><h5 class="modal-title" id="reset-modal-label">Reset Password</h5></div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-md-6 mb-4 pb-2">
+							<div class="form-outline">
+								<label class="form-label" for="email">Email</label>
+								{{reset_form.email(class="form-control form-control-lg")}}
+							</div>
+						</div>
+						<div class="col-md-6 mb-4 pb-2">
+							<div class="form-outline">
+								<label class="form-label" for="email_verification_code">Email verification code</label>
+								<span class="container row g-0">
+									<span id="verify-email" class="col-6 btn btn-info d-flex align-items-center justify-content-center">Send code</span>
+									<span class="col-6 ps-2"> {{reset_form.email_verification_code(class="form-control form-control-lg m-0")}} </span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6 mb-2">
+							<div class="form-outline">
+								<label class="form-label" for="password">New Password</label>
+								{{reset_form.password(class="form-control form-control-lg")}}
+							</div>
+						</div>
+						<div class="col-md-6 mb-2">
+							<div class="form-outline">
+								<label class="form-label" for="confirm_password">Confirm password</label>
+								{{reset_form.confirm_password(class="form-control form-control-lg")}}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<div>{{reset_form.submit(class="btn btn-primary", value="Submit")}}</div>
+				</div>
+				<div id="verify_form" class="mx-2"></div>
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="{{ url_for('customer_bp.static', filename='js/send_code.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('customer_bp.static', filename='js/reset.js') }}"></script>
+{% endif %}
+
+{% endblock %}

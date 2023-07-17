@@ -1,0 +1,228 @@
+{# Facility Page #} {% extends "manager_base.html" %} {% block content %}
+
+<style>
+	#facility td {
+		border: 1px solid #ddd;
+		padding: 10px;
+	}
+
+	#facility th {
+		border: 1px solid #ddd;
+		padding: 10px;
+		padding-top: 12px;
+		padding-bottom: 12px;
+		background-color: darkgrey;
+		color: white;
+	}
+
+	#facility tr:hover {
+		background-color: #ddd;
+	}
+
+	/* .chart {
+		width: 100%; 
+		min-height: 450px;
+	} */
+</style>
+
+
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+		google.charts.load("current", { packages: ["corechart"] });
+		google.charts.setOnLoadCallback(drawChart);
+
+		function drawChart() {
+			var data = google.visualization.arrayToDataTable([
+				["Day", "Usage"],
+				[ '{{ days[0] }}',  {{ usage[0] }} ],
+				[ '{{ days[1] }}',  {{ usage[1] }} ],
+				[ '{{ days[2] }}',  {{ usage[2] }} ],
+				[ '{{ days[3] }}',  {{ usage[3] }} ],
+				[ '{{ days[4] }}',  {{ usage[4] }} ],
+				[ '{{ days[5] }}',  {{ usage[5] }} ],
+				[ '{{ days[6] }}',  {{ usage[6] }} ]
+			]);
+
+			var options = {
+				title: "{{ facility }} usage over the last week",
+				curveType: 'function',
+				hAxis: {title: 'Day'},
+				vAxis: {title: 'Usage', baseline: 0, minValue: 1},
+				legend: 'none'
+			};
+
+			var chart = new google.visualization.LineChart(document.getElementById("curve_chart"));
+
+			var chartContainer = document.getElementById('curve_chart');
+			var containerWidth = chartContainer.offsetWidth;
+			
+			// Set the chart width and height based on the container width
+			var chartWidth = containerWidth;
+			var chartHeight = containerWidth / 2; // Set the height to half the width
+			
+			// Update the chart options with the new width and height
+			options.width = chartWidth;
+			options.height = chartHeight;
+			
+			// Draw the chart
+			var chart = new google.visualization.LineChart(chartContainer);
+			chart.draw(data, options);
+			};
+
+		window.addEventListener('resize', function() {
+			// Redraw the chart
+			drawChart();
+      	});
+
+	</script>
+
+	<div class="container-fluid">
+
+		<div class="text-center mt-2">
+			<h1>Facility Page</h1>
+			<p>Visualise your facility usage, create new facility or edit existing facility</p>
+    	</div>
+
+		<div class ="row">
+			<div class="col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+				<div class="card bg-light-subtle shadow-2-strong card-registration mt-5">
+					<div class="card-header">
+						<h5>Facility</h5>
+					</div>
+					<div class="row">
+						<div class="col-10 col-lg-10 col-md-10 pb-2 mx-auto">
+						<form method="GET" action="{{ url_for('manager_bp.manager_facility') }}">
+							<label class="form-label" for="facility_dropdown">Select a facility:</label>
+							</br>
+							<select class="form-label ml-5" id="dropdown" name="option">
+								{% for value in values %}
+								<option value="{{ value }}">{{ value }}</option>
+								{% endfor %}
+							</select>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+							<button class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle",  type="submit">Submit</button>
+						</div>
+					</div>
+						</form>
+				</div>			
+			</div>
+
+			<div class="card container-fluid border mt-2 col-md-10 pb-2 mx-auto">
+				<div class = "col-md-10 pb-2 mx-auto chart" id="curve_chart" style=""></div>
+			</div>
+
+		</div>
+
+			<div class = "row">
+				{# Change Facility #}
+				<div class = "col-6">
+					<div class = "card bg-light-subtle shadow-2-strong card-registration mt-5">
+						<div class = "card-header">
+							<h3>Edit Capacity</h3>
+						</div>	
+					
+					<form action="{{ url_for('manager_bp.manager_facility') }}" method="post" id="amend_facility_form">
+						{{ amend_facility_form.csrf_token }}
+						<div class="row">
+							<div class="col-md-10 pb-2 mx-auto">
+								<div class="form-outline ">
+									<label class="form-label" for="amend_facility_name">Facility Name</label>
+									{{amend_facility_form.amend_name(class="form-control form-control ml-5")}}
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-10 pb-2 mx-auto">
+								<div class="form-outline ">
+									<label class="form-label" for="amend_capacity">Facility Capacity</label>
+									{{amend_facility_form.amend_capacity(class="form-control form-control ml-5")}}
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-10 pb-2 mx-auto">
+						<a method="post" type="submit"> {{amend_facility_form.amend_submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle ",value="Submit")}}</a>
+							</div>
+						</div>
+
+						{% with messages = get_flashed_messages(category_filter=["amend_success"]) %} {% if messages %}
+							<ul class="alert alert-success mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["amend_error"]) %} {% if messages %}
+							<ul class="alert alert-info mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+						{% endif %} {% endwith %}
+
+					</form>
+				</div>
+				</div>
+
+				{# Add New Facility #}
+				<div class = "col-6">
+					
+					<div class = "card bg-light-subtle shadow-2-strong card-registration mt-5 mb-5">
+					<div class = "card-header">
+						<h3>Add Facility</h3>
+					</div>
+					
+					<form action="{{ url_for('manager_bp.manager_facility') }}" method="post" id="facility_form">
+						{{ facility_form.csrf_token }}
+						<div class="row justify-content-center">
+						<div class="col-md-10 pb-2 mx-auto">
+							<div class="form-outline ">
+								<label class="form-label" for="facility_name">Facility Name</label>
+								{{facility_form.name(class="form-control form-control ml-5")}}
+							</div>
+						</div>
+						</div>
+
+						<div class="row justify-content-center">
+							<div class="col-md-10 pb-2 mx-auto">
+								<div class="form-outline">
+									<label class="form-label" for="facility_capacity">Facility Capacity</label>
+									{{facility_form.capacity(class="form-control form-control")}}
+								</div>
+							</div>
+						</div>
+
+						<div class="row justify-content-center">
+							<div class="col-md-10  pb-2 mx-auto">
+							<a method="post" type="submit"> {{facility_form.submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle ", value="Submit")}}</a>
+							</div>
+						</div>
+						{% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+							<ul class="alert alert-success mt-4 p-4 ">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+							<ul class="alert alert-info mt-4 p-4 ">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+						{% endif %} {% endwith %}
+					</form>
+					</div>
+				</div>
+			</div>
+
+	</div>
+	
+	
+
+
+
+{% endblock %}

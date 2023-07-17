@@ -1,0 +1,178 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid p-5">
+	<div class="row justify-content-center">
+		<div class="col-12">
+			<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-warning">
+				{{ current_user.first_name }} {{ current_user.last_name }} {% if current_user.membership == True %}
+				<span class="text-danger"> - Member</span>
+				{% endif %}
+			</h3>
+			
+			<div class="row justify-content-center align-items-center h-100">
+				<div class="col-12 col-lg-9 col-xl-7">
+					<div class="d-flex flex-row align-items-start">
+						<div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+							<button class="nav-link active" id="v-pills-account-tab" data-bs-toggle="pill" data-bs-target="#v-pills-account" type="button" role="tab" aria-controls="v-pills-account" aria-selected="true">Account</button>
+							<button class="nav-link" id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab" aria-controls="v-pills-security" aria-selected="false">Security</button>
+						</div>
+						
+						<div class="container">
+							<div class="card bg-light-subtle shadow-2-strong card-registration" style="border-radius: 15px">
+								<div class="card-body p-4 p-md-5">
+									<div class="tab-content justify-content-center" id="v-pills-tabContent">
+										<div class="tab-pane fade show active" id="v-pills-account" role="tabpanel" aria-labelledby="v-pills-account-tab">
+											<form id="details_form">
+												<div class="row">
+													<div class="col-md-6 mb-2">
+														<div class="form-outline">
+															<label class="form-label" for="first_name">First Name</label>
+															<input class="form-control form-control-lg" value="{{current_user.first_name}}" readonly>
+														</div>
+													</div>
+													<div class="col-md-6 mb-2">
+														<div class="form-outline">
+															<label class="form-label" for="first_name">Last Name</label>
+															<input class="form-control form-control-lg" value="{{current_user.last_name}}" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-6 mb-2">
+														<div class="form-outline">
+															<label class="form-label" for="first_name">DOB</label>
+															<input class="form-control form-control-lg" value="{{current_user.date_of_birth}}" readonly>
+														</div>
+													</div>
+													<div class="col-md-6 mb-2">
+														<div class="form-outline">
+															<label class="form-label" for="first_name">Gender</label>
+															<input class="form-control form-control-lg" value="{{current_user.gender}}" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-md-6 mb-2">
+														<div class="form-outline">
+															<label class="form-label" for="first_name">Phone Number</label>
+															<input class="form-control form-control-lg" id="phone_number" readonly>
+														</div>
+													</div>
+													<div class="col-md-6 mb-2">
+														<div class="form-outline">
+															<label class="form-label" for="first_name">Email</label>
+															<input class="form-control form-control-lg" id="email" readonly>
+														</div>
+													</div>
+													<a 
+													class="btn btn-secondary btn-sm mt-1" 	
+													id="show"									
+													data-bs-toggle="modal"
+													data-bs-target="#confirm-modal"
+													>Show</a>
+													<a 
+													class="btn btn-secondary btn-sm mt-1" 	
+													style="display: none;"
+													id="hide"						
+													>Hide</a>
+												</div>
+											</form>
+										</div>
+										<div class="tab-pane fade" id="v-pills-security" role="tabpanel" aria-labelledby="v-pills-security-tab">
+
+											<a
+												class="btn btn-primary"
+												data-bs-toggle="collapse"
+												href="#collapse-password"
+												role="button"
+												aria-expanded="false"
+												aria-controls="collapse-password"
+												>Change Password</a
+											>
+											<div class="collapse mt-4" id="collapse-password">
+												<div class="panel-body">
+													<form action="{{ url_for('customer_bp.update_password') }}" id="change_password" method="POST">
+														{{ password_form.csrf_token }}
+														<div class="row">
+															<div class="col-md-6 mb-2">
+																<div class="form-outline">
+																	<label class="form-label" for="password">Current Password</label>
+																	{{password_form.password(class="form-control form-control-lg")}}
+																</div>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col-md-6 mb-2">
+																<div class="form-outline">
+																	<label class="form-label" for="new_password">New Password</label>
+																	{{password_form.new_password(class="form-control form-control-lg")}}
+																</div>
+															</div>
+															<div class="col-md-6 mb-2">
+																<div class="form-outline">
+																	<label class="form-label" for="confirm_password">Confirm password</label>
+																	{{password_form.confirm_password(class="form-control form-control-lg")}}
+																</div>
+															</div>
+														</div>
+														<div class="mt-4">{{password_form.submit(class="btn btn-primary",value="Submit")}}</div>
+
+														{% if password_form.password.errors or password_form.new_password.errors%}
+														<ul class="alert alert-warning mt-4 p-4">
+															{% for error in password_form.password.errors %}
+															<li>{{ error }}</li>
+															{% endfor %} {% for error in password_form.new_password.errors %}
+															<li>{{ error }}</li>
+															{% endfor %}
+														</ul>
+														{% endif %} {% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+														<ul class="alert alert-success mt-4 p-4">
+															{% for message in messages %}
+															<li>{{ message }}</li>
+															{% endfor %}
+														</ul>
+														{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+														<ul class="alert alert-info mt-4 p-4">
+															{% for message in messages %}
+															<li>{{ message }}</li>
+															{% endfor %}
+														</ul>
+														{% endif %} {% endwith %}
+
+													</form>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+				<div class="modal-header"><h5 class="modal-title" id="confirm-modal-label">Confirm Password</h5></div>
+				<div class="modal-body">
+					<div class="form-outline">
+						<label class="form-label" for="password">Password</label>
+						<input type="password" class="form-control form-control-lg" id="confirm_pass">
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nevermind</button>
+					<a type="button" class="btn btn-success btn-ok" data-bs-dismiss="modal">Confirm</a>
+				</div>
+		</div>
+	</div>
+</div>
+
+<script src="{{ url_for('customer_bp.static', filename='js/settings.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,163 @@
+{# Employee Page #} {% extends "manager_base.html" %} {% block content %}
+
+<style>
+	table,
+	#button {
+		font-size: 16;
+		text-align: left;
+
+		margin: 25px 40px;
+	}
+	#employee td {
+		border: 1px solid #ddd;
+		padding: 10px;
+	}
+
+	#employee th {
+		border: 1px solid #ddd;
+		padding: 10px;
+		padding-top: 12px;
+		padding-bottom: 12px;
+		background-color: darkgrey;
+		color: white;
+	}
+
+	#employee tr:hover {
+		background-color: #ddd;
+	}
+
+	#button {
+		border: 1px solid black;
+		font-size: 15px;
+		padding: 20px;
+	}
+	/* #employee_section {
+		right: 500px;
+
+		border-radius: 5px;
+		float: none;
+		position: fixed;
+		margin-right: 100px;
+		border: 2px black solid;
+	} */
+
+	form {
+		float: left;
+	}
+
+	ul,
+	li {
+		padding: 10px;
+		list-style-type: none;
+	}
+
+	h3 {
+		margin-left: 13px;
+	}
+
+	#submitButton {
+		font-size: 20px;
+	}
+
+</style>
+</style>
+	
+		<div class="container-fluid">
+			<div class="text-center">
+				<h1 class = "mt-2">Employee Page</h1>
+				<p>Add and view existing employees</p>
+			</div>
+			<div class="row justify-content-center ">
+			<div class="col-md-10 mb-4 pb-2">
+			{# Table Employee #}
+				<div id="employee_section">
+					<div class="card bg-light-subtle shadow-2-strong card-registration mt-5">
+
+						<h3 class = "text-center mt-2">Add Employee</h3>
+						<hr>
+						<div class="card-body mx-auto">
+						<form action="{{ url_for('manager_bp.manager_employee') }}" method="post" name="employee">
+							{{ form.csrf_token }}
+							<div class="form-outline ">
+								<label class="form-label" for="first_name">First name</label>
+								{{form.first_name(class="form-control form-control-lg")}}
+							</div>
+							<div class="form-outline">
+								<label class="form-label" for="last_name">Last Name</label>
+								{{form.last_name(class="form-control form-control-lg")}}
+							</div>
+							<div class="form-outline">
+								<label class="form-label" for="emai">Email</label>
+								{{form.email(class="form-control form-control-lg")}}
+							</div>
+							<div class="form-outline">
+								<label class="form-label" for="phone_number">Phone number</label>
+								{{form.phone_number(class="form-control form-control-lg")}}
+							</div>
+							<div class="form-outline">
+								<label class="form-label" for="first_name">Password</label>
+								{{form.password(class="form-control form-control-lg")}}
+							</div>
+							<div class="mt-4 text-center">{{form.submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle",value="Create")}}</div>
+							{% if form.password.errors or form.first_name.errors or form.last_name.errors or form.phone_number.errors %}
+							<ul class="alert alert-warning mt-4 p-4">
+								{% for error in form.first_name.errors %}
+								<li>{{ error }}</li>
+								{% endfor %} {% for error in form.last_name.errors %}
+								<li>{{ error }}</li>
+								
+								{% endfor %} {% for error in form.phone_number.errors %}
+								<li>{{ error }}</li>
+								{% endfor %} {% for error in form.password.errors %}
+								<li>{{ error }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+							<ul class="alert alert-success mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+							<ul class="alert alert-info mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %}
+							</div>
+						</form>
+						</div>
+					</div>
+				</div>
+				</div>
+
+				<div class="row">
+					<div class="col">
+					<div class = "table-responsive table-hover">
+						<table class="center" id="employee" style="width: 95%">
+							<tr>
+								<th>First Name</th>
+								<th>Last Name</th>
+								<th>Email</th>
+								<th>Phone Number</th>
+							</tr>
+
+							{% for employee in data%}
+
+							<tr>
+								<td>{{employee.first_name}}</td>
+								<td>{{employee.last_name}}</td>
+								<td>{{employee.email}}</td>
+								<td>{{employee.phone_number}}</td>
+							</tr>
+							{% endfor %}
+						</table>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+{% endblock %}
+

@@ -1,0 +1,144 @@
+{% extends "base.html" %} {% block content %}
+
+<section id="about">
+	<div class="bg-dark rounded-3">
+		<div class="container-fluid p-5">
+			<h1 class="display-6 fw-bold text-white">About Us</h1>
+			<p class="fs-6 text-white">
+				Welcome to GymCorp, the ultimate destination for luxury sports and leisure. Our state-of-the-art facility boasts a wide range of
+				world-class amenities, including a sparkling swimming pool, fully equipped fitness rooms, top-of-the-line squash courts, a versatile
+				sports hall, a thrilling climbing wall, and a studio designed for high-energy aerobics. We take pride in providing our members with an
+				unrivaled experience, where they can push their limits and achieve their fitness goals in a sophisticated and exclusive environment. At
+				GymCorp, we believe that wellness is a lifestyle, and our dedicated team of experts is committed to helping you achieve your best self,
+				both physically and mentally. Come and join the GymCorp community, where luxury meets fitness excellence.
+			</p>
+			<button class="btn btn-outline-primary-btn-lg mt-3 border border-black text-warning" style="background-color: #000000" type="button">
+				<a class="nav-link" href="{{ url_for('home_bp.facilities') }}">See facilities</a>
+			</button>
+		</div>
+	</div>
+</section>
+
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+	<div class="carousel-inner">
+		<div class="carousel-item active c-item">
+			<img class="d-block w-100 c-img" src="{{ url_for('home_bp.static', filename='a.png') }}" alt="Our Gym" />
+			<div class="carousel-caption fw-bold">
+				<h5>Our State Of The Art Gym</h5>
+				<p>Equipped with the latest and best equipment!</p>
+			</div>
+		</div>
+		<div class="carousel-item c-item">
+			<img class="d-block w-100 c-img" src="{{ url_for('home_bp.static', filename='sports-hall.jpg') }}" alt="Our Sports Hall" />
+			<div class="carousel-caption text-black fw-bold">
+				<h5>Our Traditional Sports Hall</h5>
+				<p>Built for any occasion!</p>
+			</div>
+		</div>
+		<div class="carousel-item c-item">
+			<img class="d-block w-100 c-img" src="{{ url_for('home_bp.static', filename='pool.jpg') }}" alt="Our Pool" />
+			<div class="carousel-caption fw-bold">
+				<h5>Our Olympic Sized Swimming Pool</h5>
+				<p>Perfect for general use, lessons or even water polo!</p>
+			</div>
+		</div>
+		<div class="carousel-item c-item">
+			<img class="d-block w-100 c-img" src="{{ url_for('home_bp.static', filename='wall.jpg') }}" alt="Climbing Wall" />
+			<div class="carousel-caption text-black fw-bold">
+				<h5>Our Towering Walls</h5>
+				<p>Great by yourself or with others!</p>
+			</div>
+		</div>
+	</div>
+	<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-bs-slide="prev">
+		<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+		<span class="sr-only">Previous</span>
+	</a>
+	<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-bs-slide="next">
+		<span class="carousel-control-next-icon" aria-hidden="true"></span>
+		<span class="sr-only">Next</span>
+	</a>
+</div>
+
+<section id="membership" class="bg-dark mt-5 mb-5">
+	<div class="container-fluid">
+		<div class="text-center">
+			<h2 class="text-white">Membership</h2>
+			<p class="lead text-white">Choose your membership!</p>
+			<div class="row my-5 align-items-center justify-content-center">
+				<div class="col-8 col-lg-4 col-xl-3 mt-5 text-warning">
+					<div class="card border border-warning" style="background-color: #000000">
+						<div class="card-header border border-warning text-center text-warning">Essential Value!</div>
+						<div class="class-body text-center py-4">
+							<h4 class="card-title">Monthly Subscription!</h4>
+							<!-- <p class="lead card-subtitle">Monthly Subscription</p> -->
+							<p class="display-5 my-4 fw-bold" style="color: #ffc107">£35/Month</p>
+							<p class="card-text mx-5 text-white d-none d-lg-block">
+								Become a member of our establishment and get {{discount_percentage}}% off of all bookings!
+							</p>
+							<a href="{{ url_for('customer_bp.subscribe') }}" class="btn btn-outline-primary-btn-lg mt-3 border border-dark text-warning"
+								>Buy Now!</a
+							>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-8 col-lg-4 col-xl-3 mt-5 text-warning">
+					<div class="card border border-warning" style="background-color: #000000">
+						<div class="card-header border border-warning text-center text-warning">Best Value!</div>
+						<div class="class-body text-center py-4">
+							<h4 class="card-title">Yearly Subscription!</h4>
+							<p class="display-5 my-4 fw-bold" style="color: #ffc107">£300/Year</p>
+							<p class="card-text mx-5 text-white d-none d-lg-block">
+								Become a member of our establishment and get {{discount_percentage}}% off of all bookings!
+							</p>
+							<a href="{{ url_for('customer_bp.subscribe') }}" class="btn btn-outline-primary-btn-lg mt-3 border border-dark text-warning"
+								>Buy Now!</a
+							>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="mt-5" id="contact">
+	<div class="container">
+		<div class="text-center p-3">
+			<h2 class="text-white">Get in Touch!</h2>
+			<p class="lead text-white">Confused? Send a question and we will get back to you shortly!</p>
+			<div class="row justify-content-center my-5">
+				<div class="col-lg-6 text-warning">
+					<form action="{{ url_for('home_bp.index')}}" method="post" name="/">
+						{{ form.csrf_token }}
+						<label for="email" class="form-label d-flex">Email address:</label>
+						{{form.email(class="form-control form-control-lg")}}
+
+						<label for="name" class="form-label d-flex">Name:</label>
+						{{form.full_name(class="form-control form-control-lg")}}
+
+						<label for="subject" class="form-label d-flex">What is your question about?</label>
+						<select id="subject" class="form-select" name="select_option">
+							<option value="Pricing Query" selected>Pricing Query</option>
+							<option value="Session Query">Session Query</option>
+							<option value="Facility Query">Facility Query</option>
+							<option value="Other Query">Other Query</option>
+						</select>
+
+						<div class="form-floating mb-4 mt-4">
+							{{form.message(class="form-control form-control-lg")}}
+
+							<label for="query" class="text-dark">Your Query:</label>
+						</div>
+
+						<div class="mb-4 text-center">
+							<a>{{form.submit(class="btn btn-secondary w-100", value = "Send!")}}</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

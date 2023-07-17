@@ -1,0 +1,72 @@
+{# Customer Page #} {% extends "manager_base.html" %} {% block content %}
+
+<style>
+	table,
+	#button {
+		font-size: 16;
+		text-align: left;
+
+		margin: 25px 40px;
+	}
+	#customers td {
+		border: 1px solid #ddd;
+		padding: 10px;
+	}
+
+	#customers th {
+		border: 1px solid #ddd;
+		padding: 10px;
+		padding-top: 12px;
+		padding-bottom: 12px;
+		background-color: darkgrey;
+		color: white;
+	}
+
+	#customers tr:hover {
+		background-color: #ddd;
+	}
+
+	#button {
+		border: 1px solid black;
+		font-size: 15px;
+		padding: 20px;
+	}
+</style>
+<html>
+		<div class="container-fluid">
+			{# Table Customer #}
+		
+		<h1 class = "text-center mt-2"> Active Customers </h1>
+		<p class = "text-center">View existing customers</p>
+
+		<div class = "table-responsive table-hover">
+			<table class="center" id="customers" style="width: 95%">
+				<tr>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Email</th>
+					<th>Phone Number</th>
+					<th>DOB</th>
+					<th>Gender</th>
+					<th>Membership</th>
+				</tr>
+
+				{% for customer in data%}
+
+				<tr>
+					<td>{{customer.first_name}}</td>
+					<td>{{customer.last_name}}</td>
+					<td>{{customer.email}}</td>
+					<td>{{customer.phone_number}}</td>
+					<td>{{customer.date_of_birth}}</td>
+					<td>{{customer.gender}}</td>
+					<td>{{customer.membership}}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+
+	
+		</div>
+</html>
+{% endblock %}

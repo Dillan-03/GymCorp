@@ -1,0 +1,78 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid p-5">
+	<div class="row justify-content-center">
+		<div class="col-12">
+			<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-warning">
+				{{ current_user.first_name }} {{ current_user.last_name }} {% if current_user.membership == True %}
+				<span class="text-danger"> - Member</span>
+				{% endif %}
+			</h3>
+			<div class="card bg-body-tertiary">
+				<div class="card-body container-fluid table-responsive">
+					<table class="table horizontal-borders">
+						<thead>
+							<tr>
+								<th scope="col">Booking ID</th>
+								<th scope="col">Date</th>
+								<th scope="col">Time</th>
+								<th scope="col">Activity</th>
+								<th scope="col">Facility</th>
+								<th scope="col">People</th>
+								<th scope="col">Cost</th>
+								<th scope="col">Status</th>
+								<th scope="col">Actions</th>
+							</tr>
+						</thead>
+						<tbody id="customer-table">
+							<tr>
+								<td colspan="8" style="border: None"></td>
+							</tr>
+							{% for booking in booking_data %}
+							<tr id="booking-{{ booking.id }}">
+								<td class="booking-id">{{ booking.id }}</td>
+								<td class="booking-date">{{ booking.date }}</td>
+								<td class="booking-time">{{ booking.time }}</td>
+								<td class="booking-activity_name">{{ booking.activity_name }}</td>
+								<td class="booking-facility_name">{{ booking.facility_name }}</td>
+								<td class="booking-number_of_people">{{ booking.number_of_people }}</td>
+								<td class="booking-cost">{{ booking.cost }}</td>
+								{% if booking.paid %}
+								<td class="booking-paid">Paid</td>
+								{% else %}
+								<td class="booking-paid">Processing</td>
+								{% endif %}
+								<td>
+									<a
+										href="{{ url_for('customer_bp.delete_booking', booking_id=booking.id) }}"
+										class="btn btn-danger cancel-booking-button requires-confirm"
+										data-bs-toggle="modal"
+										data-bs-target="#confirm-modal"
+										>Cancel</a
+									>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header"><h5 class="modal-title" id="confirm-modal-label">Confirmation</h5></div>
+			<div class="modal-body">Are you sure you want to proceed?</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nevermind</button>
+				<a class="btn btn-danger btn-ok">Confirm</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('customer_bp.static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

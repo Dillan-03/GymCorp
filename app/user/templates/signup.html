@@ -1,0 +1,154 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid p-5">
+	<div class="container h-100">
+		<div class="row justify-content-center align-items-center h-100">
+			<div class="col-12 col-lg-9 col-xl-7">
+				<div class="card bg-light-subtle shadow-2-strong card-registration" style="border-radius: 15px">
+					<div class="card-body p-4 p-md-5">
+						{% if session['user_role'] == 'employee' %}
+						<div class="text-center">
+							<a><img class="logo" style="width: 75px" src="{{ url_for('home_bp.static', filename='GBlack.png') }}" alt="GymCorp" /></a>
+						</div>
+						<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Create Customer</h3>
+						{% else %}
+						<div class="text-center">
+							<a><img class="logo" style="width: 75px" src="{{ url_for('home_bp.static', filename='GBlack.png') }}" alt="GymCorp" /></a>
+						</div>
+						<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Registration Form</h3>
+						{% endif %}
+						<hr />
+						<form action="" method="post" name="signup">
+							{{ form.csrf_token }}
+							<div class="row">
+								<div class="col-md-6 mb-4">
+									<div class="form-outline">
+										<label class="form-label" for="first_name">First name</label>
+										{{form.first_name(class="form-control form-control-lg")}}
+									</div>
+								</div>
+								<div class="col-md-6 mb-4">
+									<div class="form-outline">
+										<label class="form-label" for="last_name">Last name</label>
+										{{form.last_name(class="form-control form-control-lg")}}
+									</div>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-6 mb-4 d-flex align-items-center">
+									<div class="form-outline datepicker w-100">
+										<label for="date_of_birth" class="form-label">Date of birth</label>
+										{{form.date_of_birth(class="form-control form-control-lg")}}
+									</div>
+								</div>
+								<div class="col-md-6 mb-4">
+									<h6 class="mb-2 pb-1">Gender:</h6>
+									{% for subfield in form.gender %}
+									<div class="form-check form-check-inline">
+										{{ subfield(class="form-check-input") }} {{ subfield.label(class="form-check-label") }}
+									</div>
+									{% endfor %}
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-md-6 mb-4 pb-2">
+									<div class="form-outline">
+										<label class="form-label" for="email">Email</label>
+										{{form.email(class="form-control form-control-lg")}}
+									</div>
+								</div>
+								{% if session['user_role'] != 'employee' %}
+								<div class="col-md-6 mb-4 pb-2">
+									<div class="form-outline">
+										<label class="form-label" for="email_verification_code">Email verification code</label>
+										<span class="container row g-0">
+											<span id="verify-email" class="col-6 btn btn-info d-flex align-items-center justify-content-center">Send code</span>
+											<span class="col-6 ps-2"> {{form.email_verification_code(class="form-control form-control-lg m-0")}} </span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								{% endif %}
+								<div class="col-md-6 mb-4 pb-2">
+									<div class="form-outline">
+										<label class="form-label" for="phone_number">Phone number</label>
+										<div class="input-group mb-3">
+											<span class="input-group-text" id="country_code">+44</span>
+											{{form.phone_number(class="form-control form-control-lg")}}
+										</div>
+									</div>
+								</div>
+								{% if session['user_role'] != 'employee' %}
+								<div class="col-md-6 mb-4 pb-2">
+									<div class="form-outline">
+										<label class="form-label" for="phone_number_verification_code">SMS verification code</label>
+										<span class="container row g-0">
+											<span id="verify-sms" class="col-6 btn btn-info d-flex align-items-center justify-content-center"
+												>Send SMS code</span
+											>
+											<span class="col-6 ps-2"> {{form.phone_number_verification_code(class="form-control form-control-lg m-0")}} </span>
+										</span>
+									</div>
+								</div>
+								{% endif %}
+							</div>
+							{% if session['user_role'] != 'employee' %}
+							<div class="row">
+								<div class="col-md-6 mb-2">
+									<div class="form-outline">
+										<label class="form-label" for="password">Password</label>
+										{{form.password(class="form-control form-control-lg")}}
+									</div>
+								</div>
+								<div class="col-md-6 mb-2">
+									<div class="form-outline">
+										<label class="form-label" for="confirm_password">Confirm password</label>
+										{{form.confirm_password(class="form-control form-control-lg")}}
+									</div>
+								</div>
+							</div>
+							{% endif %}
+							<div class="mt-4 text-center">
+								{{form.submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle",value="Create")}}
+							</div>
+							<div id="verify_form" class="mx-2"></div>
+							{% if form.date_of_birth.errors or form.password.errors or form.first_name.errors or form.last_name.errors or
+							form.phone_number.errors%}
+							<ul class="alert alert-warning mt-4 p-4">
+								{% for error in form.first_name.errors %}
+								<li>{{ error }}</li>
+								{% endfor %} {% for error in form.last_name.errors %}
+								<li>{{ error }}</li>
+								{% endfor %} {% for error in form.date_of_birth.errors %}
+								<li>{{ error }}</li>
+								{% endfor %} {% for error in form.phone_number.errors %}
+								<li>{{ error }}</li>
+								{% endfor %} {% for error in form.password.errors %}
+								<li>{{ error }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+							<ul class="alert alert-success mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+							<ul class="alert alert-info mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %}
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="{{ url_for('customer_bp.static', filename='js/send_code.js') }}"></script>
+{% if session['user_role'] == 'employee' %} {% block subcontent %} {% endblock %} {% endif %} {% endblock %}

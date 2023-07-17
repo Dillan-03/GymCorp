@@ -1,0 +1,42 @@
+.body{
+    margin: 0;
+}
+
+.fwh-slide{
+    height: 100vw;
+    box-sizing: border-box;
+}
+
+.fh-slide{
+    height: 50vw
+}
+
+.footer {
+    margin: 25px 0 0 0; /* or just use:  margin-top: 50px;*/
+  }
+
+
+  html,body{
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .c-item {
+    height: 800px;
+    width: 50%;
+  }
+
+  .c-img{
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .login-page{
+    background-image: url(./background.png);
+    
+  }
+
+  .card-img-top {
+    height: 250px;
+    object-fit: cover;
+  }

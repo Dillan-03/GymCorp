@@ -1,0 +1,309 @@
+{# Activity Page #} {% extends "manager_base.html" %} {% block content %}
+
+<style>
+  ul, li{
+    list-style-type : none;
+  }
+
+
+</style>
+
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+
+      // google.load("visualization", "1", { packages: ["corechart"]});
+
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Day', 'Sales'],
+          [ '{{ days[0] }}',  {{ sales[0] }} ],
+          [ '{{ days[1] }}',  {{ sales[1] }} ],
+          [ '{{ days[2] }}',  {{ sales[2] }} ],
+          [ '{{ days[3] }}',  {{ sales[3] }} ],
+          [ '{{ days[4] }}',  {{ sales[4] }} ],
+          [ '{{ days[5] }}',  {{ sales[5] }} ],
+          [ '{{ days[6] }}',  {{ sales[6] }} ]
+        ]);
+
+        var options = {
+          title: '{{ activity }} - sales over the last week',
+          curveType: 'function',
+          hAxis: {title: 'Day'},
+          vAxis: {title: 'Sales', baseline: 0, minValue: 1},
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+
+        var chartContainer = document.getElementById('curve_chart');
+        var containerWidth = chartContainer.offsetWidth;
+        
+        // Set the chart width and height based on the container width
+        var chartWidth = containerWidth;
+        var chartHeight = containerWidth / 2; // Set the height to half the width
+        
+        // Update the chart options with the new width and height
+        options.width = chartWidth;
+        options.height = chartHeight;
+        
+        // Draw the chart
+        var chart = new google.visualization.LineChart(chartContainer);
+        chart.draw(data, options);
+      };
+
+      window.addEventListener('resize', function() {
+      // Redraw the chart
+        drawChart();
+      });
+
+    </script>
+  
+  <div class = "container-fluid">
+
+    <div class="text-center mt-2">
+      <h1>Activity Page</h1>
+      <p>Visualise your activity usage, create new activites or edit existing activities</p>
+    </div>
+
+
+    <div class="row">
+      <div class="col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+
+
+      <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto card">
+        <form method="GET" action="{{ url_for('manager_bp.manager_activity') }}">
+          <div class="card-header">
+            <h5>Activity Usage</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                <label for="dropdown">Select an activity</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                <select id="dropdown" name="option">
+                  {% for value in values %}
+                    <option value="{{ value }}">{{ value }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                <button class = " btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle"type="submit">Submit</button>
+              </div>
+            </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card container-fluid border mt-2 col-md-10 pb-2 mx-auto">
+          <div id="curve_chart" style=""></div>
+        </div>
+    
+
+        
+      
+      <div class="row">
+        <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+          <div class = "card mb-5 mt-5">
+            <div class="card-header">
+              <h3> Create A New Activity </h3>
+            </div>
+            <div class="card-body">
+                  <form action="{{ url_for('manager_bp.manager_activity') }}" method="post" name="activity_form">                
+                          {{ activity_form.csrf_token }}
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="activity_name">Activity Name</label>
+									              {{activity_form.name(class="form-control form-control ml-5")}}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="activity_name">Booking Type</label>
+									              {{activity_form.booking_type(class="form-control form-control ml-5")}}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="activity_price">Activity Price (£)</label>
+									              {{activity_form.price(class="form-control form-control ml-5")}}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="select_day">Select A Day</label>
+									              {{activity_form.days(class="form-control form-control ml-5")}}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="set_duration_hours">Duration (Hours)</label>
+									              {{activity_form.duration(class="form-control form-control ml-5")}}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="set_starting_time">Time (Starting time 8am)</label>
+									              {{activity_form.times(class="form-control form-control ml-5")}}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                              <div class="form-outline ">
+                                <label class="form-label" for="facility_name">Facility Name</label>
+									              {{activity_form.facility_name(class="form-control form-control ml-5")}}
+                              </div>  
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class=" col-10 col-lg-10 col-md-10 pb-2 mx-auto">
+                              <div class = "text-black me-2 mt-1 bg-light-subtle" method="post" type="submit"> {{activity_form.add_activity}}</div>
+                            </div>
+                          </div>
+                        
+                          {% with messages = get_flashed_messages(category_filter=["add_success"]) %} {% if messages %}
+                          <ul class="alert alert-success mt-4 p-4">
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                          </ul>
+                          {% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["add_error"]) %} {% if messages %}
+                          <ul class="alert alert-info mt-4 p-4">
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                          </ul>
+                          {% endif %} {% endwith %}
+                          
+                      </form>
+              </div>
+          </div>
+        </div>
+      </div> 
+
+      <div class="row ">
+        <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+          <div class = "card mb-5">
+            <div class="card-header">
+              <h3> Change Activity Cost </h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('manager_bp.manager_activity') }}" method="post" name="amend_activity_form">                
+                      {{ amend_activity_form.csrf_token }}
+
+                      <div class="row">
+                        <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                          <div class="form-outline ">
+                            <label class="form-label" for="activity_name">Activity Name</label>
+									          {{amend_activity_form.amend_name(class="form-control form-control ml-5")}}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                          <div class="form-outline ">
+                            <label class="form-label" for="facility_name">Facility Name</label>
+									          {{amend_activity_form.amend_facility_name(class="form-control form-control ml-5")}}
+                          </div>
+                          
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class=" col-10 col-lg-10 col-md-10  pb-2 mx-auto">
+                          <div class="form-outline ">
+                            <label class="form-label" for="price">Price (£)</label>
+									          {{amend_activity_form.amend_price(class="form-control form-control ml-5")}}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <div class=" col-10 col-lg-10 col-md-10 pb-2 mx-auto">
+                          <div class = "text-black me-2 mt-1 bg-light-subtle" method="post" type="submit"> {{amend_activity_form.amend_activity_submit}}</div>
+                        </div>
+                      </div>
+
+                      <ul>
+                            {% with messages = get_flashed_messages(category_filter=["price_success"]) %} {% if messages %}
+                            <ul class="alert alert-success mt-4 p-4">
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                            {% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["price_error"]) %} {% if messages %}
+                            <ul class="alert alert-info mt-4 p-4">
+                            {% for message in messages %}
+                            <li>{{ message }}</li>
+                            {% endfor %}
+                            </ul>
+                            {% endif %} {% endwith %}
+                        </ul>
+                  </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  </div>
+
+
+{% endblock %}
+
+// Activity Name : {{amend_activity_form.amend_name}}
+// Facility Name : {{amend_activity_form.amend_facility_name}}
+// Price (£): {{amend_activity_form.amend_price}}
+// <li class = "btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle" method="post" type="submit"> {{amend_activity_form.amend_activity_submit}}</li>
+
+
+//<li> Activity Name : {{activity_form.name}} </li>
+// <br>
+                                
+//                                 <li> Booking Type : {{activity_form.booking_type}} </li>
+//                                 <br>
+//                                 <li> Price (£): {{activity_form.price}}</li>
+//                                 <br>
+
+//                                 <li> Select a Day: {{activity_form.days}}</li>
+//                                 <br>
+
+//                                 <li> Duration (Hours) : {{activity_form.duration}} </li>
+//                                 <br>
+                                
+//                                 <li> Time (Starting time 8am) : {{activity_form.times}} </li>
+//                                 <br>
+
+//                                 <li> Facility Name : {{activity_form.facility_name}}</li>
+
+// <li method="post" type="submit"> {{activity_form.add_activity}}</li>

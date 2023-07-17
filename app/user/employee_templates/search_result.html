@@ -1,0 +1,11 @@
+{% for row in data %}
+<tr>
+	<th scope="row">{{ row.id }}</th>
+	<td>{{ row.first_name }}</td>
+	<td>{{ row.last_name }}</td>
+	<td>{{ row.email }}</td>
+	<td>{{ row.date_of_birth }}</td>
+	<td>{{ row.membership }}</td>
+	<td><a href="{{ url_for('employee_bp.customer_bookings', user_id=row.id, csrf_token=csrf_token) }}" class="btn btn-primary">Select</a></td>
+</tr>
+{% endfor %}

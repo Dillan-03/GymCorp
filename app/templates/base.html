@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% if title %}
+		<title>{{ title }}</title>
+		{% else %}
+		<title>No title specified</title>
+		{% endif %}
+		<meta charset="utf-8" />
+		<link rel="stylesheet" href="{{ url_for('home_bp.static', filename='styles.css') }}">
+		<!-- Favicon -->
+		<link rel="shortcut icon" href="{{ url_for('home_bp.static', filename='favicon.ico') }}">
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!-- jQuery-->
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+		<!-- Font Awesome icons -->
+		<script type="text/javascript" src="https://kit.fontawesome.com/ea48dd3f7c.js" crossorigin="anonymous"></script>
+		<!-- Bootstrap -->
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+		<link href="https://getbootstrap.com/docs/5.3/assets/css/docs.css" rel="stylesheet" />
+		<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<!-- CSRF security -->
+		<script type="text/javascript">
+			const csrf_token = "{{ csrf_token() }}";
+			// Send csrf token before every request
+			$.ajaxSetup({
+				beforeSend: function (xhr, settings) {
+					if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+						xhr.setRequestHeader("X-CSRFToken", csrf_token);
+					}
+				},
+			});
+		</script>
+	</head>
+	<body class="bg-dark d-flex flex-column min-vh-100">
+		<!-- Navigation bar  sourced from a predefined bootstrap navbar-->
+		<nav class="navbar navbar-expand-lg sticky-top" style="background-color: #000000">
+			<div class="container-fluid">
+				<a class = "navbar-brand text-warning" href="{{ url_for('home_bp.index') }}"><img class = "logo" style = "width: 75px" src="{{ url_for('home_bp.static', filename='G.png') }}" alt="GymCorp" /></a>
+				<button
+					class="navbar-toggler bg-warning"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navbarText"
+					aria-controls="navbarText"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse " id="navbarText">
+					<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a class="nav-link text-warning" aria-current="page" href="{{ url_for('home_bp.index') }}">Home</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-warning" aria-current="page" href="{{ url_for('home_bp.index') }}#about">About Us</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-warning" href="{{ url_for('home_bp.facilities') }}">Facilities</a>
+						</li>
+						{% if session['user_role'] == 'customer' %}
+						<li class="nav-item">
+							<a class="nav-link text-warning" href="{{ url_for('customer_bp.subscribe') }}">Membership</a>
+						</li>
+						{% endif %}
+						{% if session['user_role'] != 'employee' %}
+						<li class="nav-item">
+							<a class="nav-link text-warning" href="{{ url_for('bookings_bp.bookings') }}">Bookings</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link text-warning" href="{{ url_for('home_bp.index') }}#contact">Contact Us!</a>
+						</li>
+						{% endif %}
+
+					</ul>
+					{% if session['user_role'] == 'customer' %}
+					<div class="dropdown mt-1 me-2">
+						<button class="btn btn-outline-light btn-rounded text-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">My account</button>
+						<ul class="dropdown-menu">
+							<li>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{{ url_for('customer_bp.dashboard') }}">Bookings</a>
+								</button>
+							</li>
+							<li>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{{ url_for('customer_bp.settings') }}">Settings</a>
+								</button>
+							</li>
+						</ul>
+					</div>
+					<button class="btn btn-outline-light btn-rounded text-warning mt-1" type="button">
+						<a class="nav-link p-0" href="{{ url_for('customer_bp.logout') }}">Logout</a>
+					</button>
+					{% elif session['user_role'] == 'employee' %}
+					<button class="btn btn-outline-light btn-rounded text-warning me-2 mt-1" type="button">
+						<a class="nav-link p-0" href="{{ url_for('employee_bp.employee_dashboard') }}">Dashboard</a>
+					</button>
+					<button class="btn btn-outline-light btn-rounded text-warning mt-1" type="button">
+						<a class="nav-link p-0" href="{{ url_for('customer_bp.logout') }}">Logout</a>
+					</button>
+					{% else %}
+					<div class="dropdown mt-1 me-2">
+						<button class="btn btn-outline-light btn-rounded text-warning dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Login</button>
+						<ul class="dropdown-menu">
+							<li>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{{ url_for('customer_bp.login', login_type='customer') }}">Customer</a>
+								</button>
+							</li>
+							<li>
+								<button class="dropdown-item" type="button">
+									<a class="nav-link" href="{{ url_for('customer_bp.login', login_type='employee') }}">Employee</a>
+								</button>
+							</li>
+						</ul>
+					</div>
+					<button class="btn btn-outline-light btn-rounded text-warning mt-1 me-4" type="button">
+						<a class="nav-link p-0" href="{{ url_for('customer_bp.signup') }}">Sign up</a>
+					</button>
+					{% endif %}
+				</div>
+			</div>
+		</nav>
+		<div class = "h-100">
+			{% block content %}
+			{% endblock %}
+		</div>
+
+		
+			
+<!-- This is the code for the footer sources from a predefined bootstrap template-->
+<div class="mt-auto">
+	<!-- Footer -->
+	<footer class="footer text-center text-warning" style="background-color: #000000; margin: 250px 0 0 0;">
+	  <!-- Grid container -->
+	  <div class="container p-3 ">
+		<!-- Section: Links -->
+		<section>
+		  <!--Grid row-->
+		  <div class="row justify-content-between">
+			
+			<!--Grid column-->
+			<div class="col-lg-2">
+  
+			  <ul class="list-unstyled mb-0 text-lg" style = "text-decoration: none;">
+				<li>
+				  <a href="{{ url_for('customer_bp.login') }}" class="text-white">Log In</a>
+				</li>
+				<li>
+				  <a href="{{ url_for('home_bp.facilities') }}" class="text-white">View Facilities</a>
+				</li>
+				<li>
+				  <a href="{{ url_for('home_bp.index') }}" class="text-white">Contact Us</a>
+				</li>
+				<li>
+				  <a href="#!" class="text-white">Work For Us</a>
+				</li>
+				<li>
+				  <a href="{{ url_for('manager_bp.manager_login') }}" class="text-white">Manager login</a>
+				</li>
+			  </ul>
+			</div>
+			<!--Grid column-->
+			
+			<div class="col-lg-2">
+
+				<a class = "btn text-warning" href="{{ url_for('home_bp.index') }}"><img class = "logo" style = "width: 125px" src="{{ url_for('home_bp.static', filename='G.png') }}" alt="Gymcorp" /></a>
+				<section class="">
+  
+					<!-- Twitter -->
+					<a
+					   class="btn btn-floating m-1"
+					   href="#!"
+					   role="button">
+					  <img class = "logo" style = "width: 35px" src="{{ url_for('home_bp.static', filename='ig.png') }}" alt="Instagram" />
+					  </a>
+			
+					<!-- Instagram -->
+					<a
+					   class="btn btn-floating m-1"
+					   href="#!"
+					   role="button"
+					   ><img class = "logo" style = "width: 35px" src="{{ url_for('home_bp.static', filename='twitter.png') }}" alt="Twitter" /></a>
+			
+				  </section>
+
+
+			</div>
+
+			<!--Grid column-->
+			<div class="col-lg-2">
+  
+			  <ul class="list-unstyled">
+				<li>
+				  <a href="#!" class="text-white">FAQ</a>
+				</li>
+				<li>
+				  <a href="#!" class="text-white">Help</a>
+				</li>
+				<li>
+				  <a href="#!" class="text-white">Privacy Policy</a>
+				</li>
+				<li>
+				  <a href="#!" class="text-white">Terms & Conditions</a>
+				</li>
+			  </ul>
+			</div>
+			
+		  </div>
+
+		 
+		</section>
+		
+		
+		<!-- Section: CTA -->
+		<section class>
+		  <p class="d-flex justify-content-center align-items-center">
+			{% if current_user.is_authenticated %}
+				<div class="nav-item text-warning mb-2 text-center">Welcome {{ current_user.first_name }}!</div>
+				<button class="btn btn-outline-light btn-rounded text-warning me-1" type="button">
+					<a class="nav-link text-danger" href="{{ url_for('customer_bp.logout') }}">Logout</a>
+				</button>
+			{% endif %}
+		  </p>
+		</section>
+	  </div>
+
+	</footer>
+	<!-- Footer -->
+  </div>
+  <!-- End of .container -->
+</body>
+</html>

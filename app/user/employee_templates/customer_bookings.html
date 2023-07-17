@@ -1,0 +1,182 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid p-5">
+	<div class="row justify-content-center">
+		<div class="col-12 col-lg-2">
+			<a href="{{ url_for('employee_bp.employee_dashboard') }}" class="btn btn-primary m-1" style="margin-bottom: 0.5cm">Back</a><br />
+			<a href="{{ url_for('bookings_bp.employee_bookings', user_id=customer.id) }}" class="btn btn-success m-1" style="margin-bottom: 0.5cm"
+				>Add Booking</a
+			><br />
+			<a id="member" class="btn btn-success membership-button m-1" data-bs-toggle="modal" data-bs-target="#membership-modal">Membership</a><br />
+			<a
+				class="btn btn-danger delete_account_button requires-confirm m-1 mb-5"
+				data-action="deleteAccount"
+				data-argument="{{customer.id}}"
+				data-bs-toggle="modal"
+				data-bs-target="#confirm-modal"
+				>Delete Account</a
+			>
+		</div>
+		<div class="col-12 col-lg-10">
+			<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-warning">
+				{{ customer.first_name }} {{ customer.last_name }} {% if customer.membership == True %}
+				<span class="text-danger"> - Member</span>
+				{% endif %}
+			</h3>
+			<div class="card bg-body-tertiary">
+				<div class="card-body container-fluid table-responsive">
+					<table class="table horizontal-borders">
+						<thead>
+							<tr>
+								<th scope="col">Booking ID</th>
+								<th scope="col">Date</th>
+								<th scope="col">Time</th>
+								<th scope="col">Activity</th>
+								<th scope="col">Facility</th>
+								<th scope="col">People</th>
+								<th scope="col">Cost</th>
+								<th scope="col">Status</th>
+								<th scope="col">Actions</th>
+							</tr>
+						</thead>
+						<tbody id="customer-table">
+							<tr>
+								<td colspan="8" style="border: None"></td>
+							</tr>
+							{% for booking in booking_data %}
+							<tr id="booking-{{ booking.id }}">
+								<td class="booking-id">{{ booking.id }}</td>
+								<td class="booking-date">{{ booking.date }}</td>
+								<td class="booking-time">{{ booking.time }}</td>
+								<td class="booking-activity_name">{{ booking.activity_name }}</td>
+								<td class="booking-facility_name">{{ booking.facility_name }}</td>
+								<td class="booking-number_of_people">{{ booking.number_of_people }}</td>
+								<td class="booking-cost">{{ booking.cost }}</td>
+								{% if booking.paid %}
+								<td class="booking-paid">Paid</td>
+								{% else %}
+								<td class="booking-paid">Processing</td>
+								{% endif %}
+								<td>
+									<a
+										class="btn btn-primary"
+										data-bs-toggle="collapse"
+										href="#collapse-edit-{{ booking.id }}"
+										role="button"
+										aria-expanded="false"
+										aria-controls="collapse-edit-{{ booking.id }}"
+										>Edit</a
+									>
+									<a
+										class="btn btn-danger cancel-booking-button requires-confirm"
+										data-action="cancelBooking"
+										data-argument="{{booking.id}}"
+										data-bs-toggle="modal"
+										data-bs-target="#confirm-modal"
+										>Cancel</a
+									>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="8" style="border: None">
+									<div class="collapse" id="collapse-edit-{{ booking.id }}">
+										<div class="panel-body">
+											<a
+												class="btn btn-secondary btn-sm date-time-button"
+												data-bs-toggle="collapse"
+												href="#edit-date-time-{{ booking.id }}"
+												role="button"
+												aria-expanded="false"
+												aria-controls="edit-date-time-{{ booking.id }}"
+												data-booking-id="{{ booking.id }}"
+												>Date or Time</a
+											>
+											{% if (activities[loop.index0].booking_type | string) != "BookingTypes.BOOKING" %}
+											<a
+												class="btn btn-secondary btn-sm"
+												data-bs-toggle="collapse"
+												href="#edit-people-{{ booking.id }}"
+												role="button"
+												aria-expanded="false"
+												aria-controls="edit-people-{{ booking.id }}"
+												>People</a
+											>
+											{% endif %}
+											<div class="collapse" id="edit-people-{{ booking.id }}" data-bs-parent="#collapse-edit-{{ booking.id }}">
+												<div class="panel-body mt-1">
+													<a
+														class="btn btn-secondary btn-sm decrement"
+														data-booking-id="{{ booking.id }}"
+														data-price="{{ booking.price }}"
+														>-</a
+													>
+													<span class="booking-number_of_people">{{ booking.number_of_people }}</span>
+													<a
+														class="btn btn-secondary btn-sm increment"
+														data-booking-id="{{ booking.id }}"
+														data-price="{{ booking.price }}"
+														>+</a
+													>
+												</div>
+											</div>
+											<div
+												class="collapse container-fluid"
+												id="edit-date-time-{{ booking.id }}"
+												data-bs-parent="#collapse-edit-{{ booking.id }}"
+											>
+												<div class="sessions-table" data-booking-id="{{ booking.id }}"></div>
+											</div>
+										</div>
+									</div>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="confirm-modal" tabindex="-1" role="dialog" aria-labelledby="confirm-modal-label" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header"><h5 class="modal-title" id="confirm-modal-label">Confirmation</h5></div>
+			<div class="modal-body">Are you sure you want to proceed?</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nevermind</button>
+				<a class="btn btn-danger btn-ok">Confirm</a>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="membership-modal" tabindex="-1" role="dialog" aria-labelledby="membership-modal-label" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<form method="POST" action="{{ url_for('employee_bp.confirm_membership', user_id=customer.id) }}" id="membership-form">
+				<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+				<div class="modal-header"><h5 class="modal-title" id="membership-modal-label">Membership</h5></div>
+				<div class="modal-body">
+					<select class="form-select" aria-label="Membership" name="membership" id="membership">
+						{% if customer.membership == True %}
+						<option selected>Member</option>
+						<option value="2">Non-Member</option>
+						{% else %}
+						<option selected>Non-Member</option>
+						<option value="1">Member</option>
+						{% endif %}
+					</select>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Nevermind</button>
+					<button type="submit" class="btn btn-success">Confirm</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="{{ url_for('employee_bp.static', filename='js/customer_bookings.js') }}"></script>
+{% endblock %}

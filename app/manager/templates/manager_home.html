@@ -1,0 +1,88 @@
+{# Home Page for when the manager logs in #} {% extends "manager_base.html" %} {% block content %}
+<div class="text-center">
+    <h1 class = "mt-2">Site-Wide Discount</h1>
+    <p>Here you can change the site-wide discounts for members as well as customers who book four or more session</p>
+</div>
+<div class="container-fluid">
+    <!-- Discount Form -->
+    <div class="row justify-content-center">
+    <div class="col-lg-6" style= "width: 60%;">
+    <div class="card bg-light-subtle shadow-2-strong card-registration mt-5 ">
+        <div class="card-header">
+            Change the site-wide discount
+        </div>
+        <div class="card-body">
+        <form class="" action="{{ url_for('manager_bp.manager_home') }}" method="post" name="manager">
+        {{ form.csrf_token }}
+            <a> Enter discount : {{form.discount}} %</a>
+            <br>
+            <a method="post" type="submit" href="#"> {{form.submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtl")}}</a>
+            
+            {% if form.discount.errors %}
+            <ul class="alert alert-warning mt-4 p-4">
+                {% for error in form.discount.errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %} {% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+            <ul class="alert alert-success mt-4 p-4">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+            <ul class="alert alert-info mt-4 p-4">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %} {% endwith %}
+
+        </form>
+        </div>
+    </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-6" style= "width: 60%;">
+        <div class="card bg-light-subtle shadow-2-strong card-registration mt-5 ">
+            <div class="card-header">
+            <table class="table" id="discount">
+                <tr>
+                    <th> Current Discount % </th>
+                </tr>
+                {% for row in data %}
+    
+                    <tr>
+                        <td>{{row}}</td>
+                    </tr>
+    
+                {% endfor %}
+            </div>
+            </table>
+        </div>
+    </div>
+
+    </div>
+    </div>
+   <!-- Discount Table  -->
+   <!-- <table class="center table table-bordered w-25" id="discount">
+				<tr>
+					<th> Current Discount % </th>
+				</tr>
+
+				{% for row in data%}
+
+                    <tr>
+                        <td>{{row.discount}}</td>
+                    </tr>
+
+				{% endfor %}
+
+
+
+
+			</table> -->
+
+</div>            
+   
+{% endblock %}

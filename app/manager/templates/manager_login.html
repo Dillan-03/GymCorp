@@ -1,0 +1,62 @@
+{% extends "manager_login_base.html" %} {% block content %}
+
+<div class="container-fluid p-5">
+	<div class="container h-100">
+		<div class="row justify-content-center align-items-center h-100">
+			<div class="col-12 col-lg-9 col-xl-7">
+				<div class="card bg-light-subtle shadow-2-strong card-registration" style="border-radius: 15px">
+					<div class="card-body p-4 p-md-5">
+						<div class = "text-center">
+							<a href="{{ url_for('home_bp.index') }}"><img class = "logo" style = "width: 75px;" src="{{ url_for('home_bp.static', filename='GBlack.png') }}" alt="GymCorp" /></a>
+						</div>
+						<h3 class="mb-4 pb-2 pb-md-0 mb-md-5 text-center">Manager Login</h3>
+						<form {# action="{{ url_for('customers_bp.admin_login') }}" #} method="post" name="">
+							<hr>	
+							{{ form.csrf_token }}
+							<div class="row justify-content-center">
+								<div class="col-md-10 mb-4 pb-2">
+									<div class="form-outline">
+										<label class="form-label" for="admin_email">Manager Email</label>
+										{{form.email(class="form-control form-control-lg")}}
+									</div>
+								</div>
+							</div>
+
+							<div class="row justify-content-center">
+								<div class="col-md-10 mb-4 pb-2">
+									<div class="form-outline">
+										<label class="form-label" for="admin_password">Manager Password</label>
+										{{form.password(class="form-control form-control-lg")}}
+									</div>
+								</div>
+							</div>
+
+							<div class="mt-4 text-center">{{form.submit(class="btn btn-outline-dark btn-rounded text-black me-2 mt-1 bg-light-subtle",value="Login")}}</div>
+							{% if form.password.errors %}
+							<ul class="alert alert-warning mt-4 p-4">
+								{% for error in form.password.errors %}
+								<li>{{ error }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% with messages = get_flashed_messages(category_filter=["success"]) %} {% if messages %}
+							<ul class="alert alert-success mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %} {% with messages = get_flashed_messages(category_filter=["error"]) %} {% if messages %}
+							<ul class="alert alert-info mt-4 p-4">
+								{% for message in messages %}
+								<li>{{ message }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %} {% endwith %}
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}
